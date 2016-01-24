@@ -19,6 +19,11 @@ Route::get('ah', function () {
     return view('ah');
 });
 
+Route::get('test', function () {
+    $service = (new App\Feeds\AH\Service)->run();
+    return $service;
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
