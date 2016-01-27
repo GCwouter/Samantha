@@ -22,33 +22,42 @@ class Factory
 	    		foreach ($categories as $categorie) {
 	    			if ($categorie['resourceType'] == 'Product') {
 	    				$productLabel = $categorie['_embedded']['productCard'];
-	    				var_dump($productLabel);
 	    				$product = [];
 	    				$product['week'] = $functions->findWeek($productLabel['navItem']['link']['href']);
 	    				$product['actionDateStart'] = Carbon::now()->startOfWeek()->toDateString();
 	    				$product['actionDateEnd'] = Carbon::now()->endOfWeek()->toDateString();
-	    				$product['orginalPrice'] = null;
+	    				$product['label'] = $product['period'] = $product['originalPrice'] = null;
 	    				$product['categorie'] = $productLabel['label'];
 	    				$product['name'] = $productLabel['navItem']['title'];
 	    				$productCard = $productLabel['_embedded']['product'];
-	    				//var_dump($productCard);
 	    				$product['unitSize'] = $productCard['unitSize'];
 	    				if ( array_key_exists('was', $productCard['priceLabel']) ) {
-	    					$product['orginalPrice'] = $productCard['priceLabel']['was'];
+	    					$product['originalPrice'] = $productCard['priceLabel']['was'];
 	    				}
 	    				$product['actionPrice'] = $productCard['priceLabel']['now'];
 	    				if ( array_key_exists('discount', $productCard) ) {
-		    				var_dump(array_key_exists('period', $productCard['discount']));
 		    				if ( array_key_exists('period', $productCard['discount']) ) {
 		    					$product['period'] = $productCard['discount']['period'];
 		    					$product['label'] = $productCard['discount']['label'];
 		    				}
 		    			}
 	    				$product['AHid'] = $productCard['id'];
-	    				
-	    				//dd($categorie);
-	    				var_dump($product);
-	    				//dd('doei');
+	    				$product_object = Product::firstOrNew([
+											'AHid' => $product['AHid'], 
+											'week' => $product['week']
+										]);
+	    				$product_object->week = $product['week'];
+	    				$product_object->actionDateStart = $product['actionDateStart'];
+	    				$product_object->actionDateEnd = $product['actionDateEnd'];
+	    				$product_object->label = $product['label'];
+	    				$product_object->categorie = $product['categorie'];
+	    				$product_object->name = $product['name'];
+	    				$product_object->unitSize = $product['unitSize'];
+	    				$product_object->originalPrice = $product['originalPrice'];
+	    				$product_object->actionPrice = $product['actionPrice'];
+	    				$product_object->period = $product['period'];
+	    				$product_object->AHid = $product['AHid'];
+	    				$product_object->save();
 	    			}
 	    		}
 	    	}
