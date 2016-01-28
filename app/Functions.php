@@ -9,8 +9,11 @@ use DOMXPath;
 class Functions
 {
 	public function findWeek($string) {
-		$result = $this->between('week/', '?group', $string);
-		return $result;
+		$result = $this->between('week/', '?', $string);
+		if ( strlen($result) == 0 ) {
+			$result = $this->between('week/', '/', $string);
+		}
+		return intval($result);
 	}
 
 	public function before($first, $inthat)
